@@ -1,0 +1,78 @@
+﻿@model Login.Models.User
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+        }
+        .custom {
+            margin-top: 20rem;
+            width: 35rem;
+            border: 1px solid black;
+            border-radius: 10px;
+            padding: 3rem;
+        }
+        #status {
+            margin-top: 2rem;
+        }
+    </style>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Login</title>
+</head>
+<body>
+    @Html.Partial("_NavBar")
+    <div class="form-group custom">
+        @using (Html.BeginForm("Authentication", "Login", FormMethod.Post))
+        {
+            <div class="form-group">
+                @Html.LabelFor(m => m.Username)
+                @Html.TextBoxFor(m => m.Username, new { @class = "form-control", @id = "username" })
+                @Html.ValidationMessageFor(m => m.Username)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.Password)
+                @Html.TextBoxFor(m => m.Password, new { @class = "form-control", @type = "password", @id = "password" })
+                @Html.ValidationMessageFor(m => m.Password)
+            </div>
+            <input class="btn btn-primary" type="submit" value="Login" id="submitButton">
+            <p class="text-center lead" id="status">@ViewBag.Message</p>
+            <p class="text-center mt-4">@Html.ActionLink("Create Account", "Create", "Login")</p>
+        }
+    </div>
+</body>
+</html>
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<script>
+    $(function () {
+        $("#submitButton").click(function (event) {
+            event.preventDefault();
+            $.ajax({
+                type: "POST",
+                url: "/Login/Authentication",
+                data: {
+                    Username: $("#username").val(),
+                    Password: $("#password").val(),
+                },
+                success: function myFunction(response) {
+                    if (response == "Success") {
+                        window.location = "/Home/Index";
+                    }
+                    else {
+                        document.getElementById("status").innerHTML = "Invalid Username or Password";
+                    }
+                    $("#username, #password, #confirmPassword").val("");
+                }
+            });
+        });
+    });
+</script>

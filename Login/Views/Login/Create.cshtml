@@ -1,0 +1,79 @@
+﻿@model Login.Models.User
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+        }
+        .custom {
+            margin-top: 20rem;
+            width: 35rem;
+            border: 1px solid black;
+            border-radius: 10px;
+            padding: 3rem;
+        }
+        #status {
+            margin-top: 2rem;
+        }
+    </style>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Create Account</title>
+</head>
+<body>
+    @Html.Partial("_NavBar")
+    <div class="form-group custom">
+        @using (Html.BeginForm("Insert", "Login", FormMethod.Post))
+        {
+            <div class="form-group">
+                @Html.LabelFor(m => m.Username)
+                @Html.TextBoxFor(m => m.Username, new { @class = "form-control", id = "username" })
+                @Html.ValidationMessageFor(m => m.Username)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.Password)
+                @Html.TextBoxFor(m => m.Password, new { @class = "form-control", @type = "password", @id = "password" })
+                @Html.ValidationMessageFor(m => m.Password)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.ConfirmPassword)
+                @Html.TextBoxFor(m => m.ConfirmPassword, new { @class = "form-control", @type = "password", @id = "confirmPassword" })
+                @Html.ValidationMessageFor(m => m.ConfirmPassword)
+            </div>
+            <input class="btn btn-primary" type="submit" id="submitButton" value="Create">
+            <p id="status" class="text-center lead"></p>
+        }
+    </div>
+
+</body>
+</html>
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<script>
+    $(function () {
+        $("#submitButton").click(function (event) {
+            event.preventDefault();
+            $.ajax({
+                type: "POST",
+                url: "/Login/Insert",
+                data: {
+                    Username: $("#username").val(),
+                    Password: $("#password").val(),
+                    ConfirmPassword: $("#confirmPassword").val(),
+                },
+                success: function myFunction(response) {
+                    document.getElementById("status").innerHTML = response;
+                    $("#username, #password, #confirmPassword").val("");
+                }
+            });
+        });
+    });
+</script>
